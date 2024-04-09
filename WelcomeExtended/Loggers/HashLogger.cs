@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WelcomeExtended.Loggers
 {
-    internal class HashLogger : ILogger
+    public class HashLogger : ILogger
     {
         private readonly ConcurrentDictionary<int, string> _logMessages;
 
@@ -56,9 +56,65 @@ namespace WelcomeExtended.Loggers
             Console.WriteLine($"{formatter(state, exception)}");
             Console.WriteLine("- LOGGER -");
             Console.ResetColor();
-            _logMessages[eventId.id] = message;
+            _logMessages[eventId.Id] = message;
         }
 
+        public void PrintAllMessages()
+        {
+            Console.WriteLine("All logged messages:");
+            foreach (var kvp in _logMessages)
+            {
+                Console.WriteLine($"EventId: {kvp.Key}, Message: {kvp.Value}");
+            }
+        }
 
+        public void PrintMessageByEventId(int eventId)
+        {
+            if (_logMessages.TryGetValue(eventId, out var message))
+            {
+                Console.WriteLine($"Message for EventId {eventId}: {message}");
+            }
+            else
+            {
+                Console.WriteLine($"No message found for EventId {eventId}");
+            }
+        }
+
+        public void DeleteMessageByEventId(int eventId)
+        {
+            _logMessages.TryRemove(eventId, out _);
+        }
+        public void ClearAllMessages()
+        {
+            _logMessages.Clear();
+            Console.WriteLine("All messages are cleared!");
+        }
+
+        internal class FileLogger : ILogger
+        {
+            private readonly string _filePath;
+
+            public FileLogger(string filePath)
+            {
+                _filePath = filePath;
+            }
+
+            public IDisposable BeginScope<TState>(TState state) where TState : notnull
+            {
+                return null;
+            }
+
+            public bool IsEnabled(LogLevel logLevel)
+            {
+                return true;
+            }
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+            {
+                var message = formatter(state, exception);
+                var formattedMessage = $"[{DateTime.Now}] [{logLevel}] {message}" + Environment.NewLine;
+                File.AppendAllText(_filePath, formattedMessage);
+            }
+        }
     }
 }

@@ -45,6 +45,5 @@ namespace Welcome.Model
             get { return email; }
             set { email = value; }
         }
-
     }
 }
