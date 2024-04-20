@@ -10,12 +10,31 @@ namespace Welcome.Model
     public class User
     {
         public string name;
-        private string password;
+        public string password;
         public UsersRolesEnum roles;
         public int fNum;
         public string email;
+        public int Id;
+        public DateTime Expires;
 
-        
+        public User(string name, string password, UsersRolesEnum roles, int fNum, string email, int Id, DateTime expires)
+        {
+            this.name = name;
+            this.password = password;
+            this.roles = roles;
+            this.fNum = fNum;
+            this.email = email;
+            this.Id = Id;
+            this.Expires = expires;
+        }
+
+        public User(string? name, string? password, UsersRolesEnum role)
+        {
+            this.name = name;
+            this.password = password;
+            Role = role;
+        }
+
         public string Name
         {
             get { return name; }
@@ -45,5 +64,19 @@ namespace Welcome.Model
             get { return email; }
             set { email = value; }
         }
+
+        public int id
+        {
+            get { return Id; }
+            set { Id = value; }
+        }
+
+        public DateTime expires
+        {
+            get { return Expires; }
+            set { Expires = value; }
+        }
+
+        public UsersRolesEnum Role { get; }
     }
 }
